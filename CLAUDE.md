@@ -1,4 +1,4 @@
-# Po"Codex
+# Podex
 
 ## Design System
 

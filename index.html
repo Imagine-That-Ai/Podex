@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f7f6f1" />
       <meta
         name="description"
-        content="Po&quot;Codex — a warm, deliberate companion layer for Codex CLIProxy."
+        content="Podex — a warm, deliberate companion layer for Codex CLIProxy."
       />
-    <title>Po&quot;Codex — a quieter control surface</title>
+    <title>Podex — a quieter control surface</title>
     <style>
       :root {
         color-scheme: light;
@@ -383,13 +383,13 @@
   </head>
   <body>
     <header class="shell topbar">
-      <a class="brand" href="#top" aria-label="Po Codex home">
+      <a class="brand" href="#top" aria-label="Podex home">
         <img src="assets/mark.svg" alt="" />
-        <span>Po<em>&quot;</em>Codex</span>
+        <span>Podex</span>
       </a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="#principles">Principles</a>
-        <a href="https://github.com/Imagine-That-Ai/PoCodex">GitHub</a>
+        <a href="https://github.com/Imagine-That-Ai/Podex">GitHub</a>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
           <span class="theme-dot" aria-hidden="true"></span>
           <span id="theme-label">Night</span>
@@ -402,15 +402,15 @@
         <div class="hero-copy">
           <div class="eyebrow">Codex CLIProxy · companion layer</div>
           <h1>A quieter surface for <span>louder work.</span></h1>
-          <p class="lede">Po&quot;Codex gives the tools around Codex a point of view: warm in the light, carbon at night, and precise about what is actually connected.</p>
+          <p class="lede">Podex gives the tools around Codex a point of view: warm in the light, carbon at night, and precise about what is actually connected.</p>
           <div class="actions">
             <a class="button primary" href="#principles">See the direction <span aria-hidden="true">&nbsp;↘</span></a>
-            <a class="button secondary" href="https://github.com/Imagine-That-Ai/PoCodex">Open the repo</a>
+            <a class="button secondary" href="https://github.com/Imagine-That-Ai/Podex">Open the repo</a>
           </div>
           <div class="hero-note">A visual companion, not a replacement for the official runtime.</div>
         </div>
 
-        <div class="visual" aria-label="Po Codex visual direction">
+        <div class="visual" aria-label="Podex visual direction">
           <figure class="visual-main">
             <img src="assets/light-studio.jpg" alt="Warm light moving across a minimal studio surface" />
             <figcaption class="visual-tag"><strong>light / intentional</strong><span>surface: white · accent: ember</span></figcaption>
@@ -430,7 +430,7 @@
       <section class="shell principles" id="principles">
         <div class="section-head">
           <h2>Make the instrument feel considered.</h2>
-          <p>Po&quot;Codex is the design and product home for the companion layer around a custom Codex runtime.</p>
+          <p>Podex is the design and product home for the companion layer around a custom Codex runtime.</p>
         </div>
         <div class="principle-grid">
           <article class="principle"><div class="principle-index">A / 01</div><h3>Remote stays legible.</h3><p>Connected, waiting, failed, and unverified are different states. The surface should never flatten them into one green dot.</p></article>
@@ -440,19 +440,19 @@
       </section>
     </main>
 
-    <footer class="shell"><span>Po&quot;Codex / Imagine That</span><span>Built as a companion layer · 2026</span></footer>
+    <footer class="shell"><span>Podex / Imagine That</span><span>Built as a companion layer · 2026</span></footer>
 
     <script>
       const root = document.documentElement;
       const toggle = document.querySelector("#theme-toggle");
       const label = document.querySelector("#theme-label");
-      const stored = localStorage.getItem("pocodex-theme");
+      const stored = localStorage.getItem("podex-theme");
       const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const setTheme = (theme) => {
         root.dataset.theme = theme;
         label.textContent = theme === "dark" ? "Light" : "Night";
         document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#0b0c0c" : "#f7f6f1");
-        localStorage.setItem("pocodex-theme", theme);
+        localStorage.setItem("podex-theme", theme);
       };
       setTheme(stored || (systemDark ? "dark" : "light"));
       toggle.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark"));

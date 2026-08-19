@@ -1,6 +1,6 @@
 # Runtime notes
 
-Po"Codex is an overlay around a local Codex CLIProxy install. The repository is intentionally separate from both the official app bundle and the operator's private seat data.
+Podex is an overlay around a local Codex CLIProxy install. The repository is intentionally separate from both the official app bundle and the operator's private seat data.
 
 ## Remote Control
 

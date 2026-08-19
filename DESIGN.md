@@ -1,4 +1,4 @@
-# Design System — Po"Codex
+# Design System — Podex
 
 ## Product Context
 
