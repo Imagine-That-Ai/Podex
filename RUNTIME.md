@@ -31,4 +31,4 @@ The desktop ChatGPT session for that seat still needs to be signed in through th
 
 ## Safe activation
 
-The installed proxy currently hosts live Codex work. The ASAR candidate is therefore verified but not hot-swapped during an active task; the custom launcher default is already installed so the next launch selects the short Personal home. When handing off safely, restart only `/Applications/Codex CLIProxy.app`; the regular ChatGPT app is out of scope.
+The installed proxy currently hosts live Codex work. The sync command stages a durable candidate and never hot-swaps the live app during an active task. When handing off safely, close `/Applications/Codex CLIProxy.app` deliberately, run `~/.local/bin/codex-cliproxy-apply-pending apply`, verify the result, and launch it again; no command in the staging path quits or relaunches the active task. The regular ChatGPT app is out of scope.
