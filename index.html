@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f6f1" />
+      <meta
+        name="description"
+        content="Po&quot;Codex — a warm, deliberate companion layer for Codex CLIProxy."
+      />
+    <title>Po&quot;Codex — a quieter control surface</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --canvas: #f7f6f1;
+        --canvas-strong: #ffffff;
+        --ink: #171512;
+        --ink-soft: #6f6b63;
+        --line: rgba(23, 21, 18, 0.14);
+        --line-soft: rgba(23, 21, 18, 0.08);
+        --accent: #b85b27;
+        --accent-strong: #8e421b;
+        --accent-wash: #f3dfce;
+        --green: #3f795b;
+        --shadow: 0 26px 70px rgba(52, 39, 26, 0.14);
+        --radius-lg: 28px;
+        --radius-md: 16px;
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --canvas: #0b0c0c;
+        --canvas-strong: #141615;
+        --ink: #f2f0e9;
+        --ink-soft: #a7a69d;
+        --line: rgba(242, 240, 233, 0.16);
+        --line-soft: rgba(242, 240, 233, 0.09);
+        --accent: #e69a63;
+        --accent-strong: #ffbd84;
+        --accent-wash: #332116;
+        --green: #9dd5ae;
+        --shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { min-width: 320px; scroll-behavior: smooth; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 75% 2%, color-mix(in srgb, var(--accent-wash) 70%, transparent), transparent 24rem),
+          var(--canvas);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        transition: color 260ms var(--ease), background 420ms var(--ease);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 48px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .brand img {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 20%, transparent);
+      }
+
+      .brand em {
+        color: var(--accent-strong);
+        font-style: normal;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        color: var(--ink-soft);
+        font-size: 12px;
+      }
+
+      .nav a { transition: color 160ms ease; }
+      .nav a:hover, .nav a:focus-visible { color: var(--ink); }
+
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--canvas-strong) 72%, transparent);
+        cursor: pointer;
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      }
+
+      .theme-toggle:hover { transform: translateY(-1px); border-color: var(--accent); }
+      .theme-toggle:focus-visible, .button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+      .theme-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.93fr) minmax(420px, 1.07fr);
+        gap: clamp(48px, 8vw, 120px);
+        align-items: center;
+        min-height: 680px;
+        padding: 78px 0 84px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--accent-strong);
+        font: 600 11px/1 ui-monospace, "SF Mono", Menlo, monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent);
+      }
+
+      h1 {
+        max-width: 660px;
+        margin: 28px 0 24px;
+        font-size: clamp(52px, 7.1vw, 96px);
+        font-weight: 680;
+        letter-spacing: -0.075em;
+        line-height: 0.95;
+      }
+
+      h1 span { color: var(--accent-strong); }
+
+      .lede {
+        max-width: 500px;
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: clamp(17px, 2vw, 20px);
+        letter-spacing: -0.025em;
+        line-height: 1.45;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 34px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 650;
+        transition: transform 180ms var(--ease), background 180ms ease, border-color 180ms ease;
+      }
+
+      .button:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+      .button.primary {
+        border-color: var(--ink);
+        color: var(--canvas);
+        background: var(--ink);
+      }
+
+      .button.secondary { background: color-mix(in srgb, var(--canvas-strong) 68%, transparent); }
+
+      .hero-note {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 28px;
+        color: var(--ink-soft);
+        font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace;
+      }
+
+      .hero-note::before {
+        content: "↳";
+        color: var(--accent);
+        font-size: 16px;
+      }
+
+      .visual {
+        position: relative;
+        min-height: 510px;
+      }
+
+      .visual-main {
+        position: absolute;
+        inset: 0 38px 42px 0;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        background: var(--canvas-strong);
+        box-shadow: var(--shadow);
+        transform: rotate(-2deg);
+        transition: transform 500ms var(--ease), box-shadow 300ms ease;
+      }
+
+      .visual-main:hover { transform: rotate(0deg) translateY(-4px); }
+
+      .visual-main img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.82) contrast(1.03); }
+
+      .visual-main::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(145deg, transparent 25%, color-mix(in srgb, var(--accent) 24%, transparent));
+        mix-blend-mode: multiply;
+        pointer-events: none;
+      }
+
+      :root[data-theme="dark"] .visual-main::after { mix-blend-mode: screen; opacity: 0.22; }
+
+      .visual-tag {
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        z-index: 1;
+        display: grid;
+        gap: 5px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 14px;
+        color: #fff;
+        background: rgba(11, 12, 12, 0.58);
+        backdrop-filter: blur(14px);
+      }
+
+      .visual-tag strong { font-size: 13px; }
+      .visual-tag span { color: rgba(255, 255, 255, 0.68); font: 10px/1 ui-monospace, "SF Mono", Menlo, monospace; }
+
+      .visual-small {
+        position: absolute;
+        z-index: 2;
+        width: 44%;
+        aspect-ratio: 1.18;
+        overflow: hidden;
+        border: 8px solid var(--canvas);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .visual-small img { width: 100%; height: 100%; object-fit: cover; }
+      .visual-small.one { right: 0; bottom: 74px; transform: rotate(4deg); }
+      .visual-small.two { left: 14%; bottom: 0; transform: rotate(-5deg); }
+
+      .orbit {
+        position: absolute;
+        right: 4%;
+        top: 13%;
+        width: 116px;
+        aspect-ratio: 1;
+        border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+        border-radius: 50%;
+        transform: rotate(-18deg) scaleY(0.38);
+        animation: orbit 8s linear infinite;
+      }
+
+      .orbit::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 15%, transparent);
+        transform: translateY(-50%);
+      }
+
+      @keyframes orbit { to { transform: rotate(342deg) scaleY(0.38); } }
+
+      .signal {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr;
+        gap: 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .signal-item { padding: 24px 24px 26px 0; }
+      .signal-item + .signal-item { padding-left: 24px; border-left: 1px solid var(--line); }
+      .signal-label { color: var(--ink-soft); font: 10px/1.2 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .11em; text-transform: uppercase; }
+      .signal-value { margin-top: 10px; font-size: 16px; font-weight: 620; letter-spacing: -.025em; }
+      .signal-copy { margin-top: 8px; color: var(--ink-soft); font-size: 12px; line-height: 1.45; }
+
+      .principles { padding: 104px 0 120px; }
+
+      .section-head { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 34px; }
+      h2 { max-width: 520px; margin: 0; font-size: clamp(32px, 4.5vw, 56px); letter-spacing: -.065em; line-height: 1; }
+      .section-head p { max-width: 320px; margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+
+      .principle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; border-top: 1px solid var(--line); }
+      .principle { min-height: 230px; padding: 24px 24px 24px 0; border-bottom: 1px solid var(--line); }
+      .principle + .principle { padding-left: 24px; border-left: 1px solid var(--line); }
+      .principle-index { color: var(--accent); font: 11px/1 ui-monospace, "SF Mono", Menlo, monospace; }
+      .principle h3 { margin: 64px 0 10px; font-size: 21px; letter-spacing: -.045em; }
+      .principle p { max-width: 280px; margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.55; }
+
+      footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px 0 32px; color: var(--ink-soft); font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace; }
+
+      @media (max-width: 860px) {
+        .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 64px; }
+        .hero-copy { max-width: 680px; }
+        .visual { min-height: 480px; margin-top: 8px; }
+      }
+
+      @media (max-width: 640px) {
+        .shell { width: min(100% - 32px, 540px); }
+        .nav a { display: none; }
+        .topbar { padding: 16px 0; }
+        .hero { padding: 52px 0 64px; }
+        h1 { font-size: clamp(50px, 16vw, 78px); }
+        .visual { min-height: 370px; }
+        .visual-main { inset: 0 20px 32px 0; }
+        .visual-small { border-width: 5px; border-radius: 15px; }
+        .visual-small.one { bottom: 52px; }
+        .signal { grid-template-columns: 1fr; }
+        .signal-item, .signal-item + .signal-item { padding: 18px 0; border-left: 0; }
+        .signal-item + .signal-item { border-top: 1px solid var(--line); }
+        .section-head { display: block; }
+        .section-head p { margin-top: 18px; }
+        .principle-grid { grid-template-columns: 1fr; }
+        .principle, .principle + .principle { min-height: auto; padding: 22px 0 26px; border-left: 0; }
+        .principle + .principle { border-top: 1px solid var(--line); }
+        .principle h3 { margin-top: 34px; }
+        footer { display: block; }
+        footer span + span { display: block; margin-top: 8px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="shell topbar">
+      <a class="brand" href="#top" aria-label="Po Codex home">
+        <img src="assets/mark.svg" alt="" />
+        <span>Po<em>&quot;</em>Codex</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#principles">Principles</a>
+        <a href="https://github.com/Imagine-That-Ai/PoCodex">GitHub</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+          <span class="theme-dot" aria-hidden="true"></span>
+          <span id="theme-label">Night</span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="shell hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Codex CLIProxy · companion layer</div>
+          <h1>A quieter surface for <span>louder work.</span></h1>
+          <p class="lede">Po&quot;Codex gives the tools around Codex a point of view: warm in the light, carbon at night, and precise about what is actually connected.</p>
+          <div class="actions">
+            <a class="button primary" href="#principles">See the direction <span aria-hidden="true">&nbsp;↘</span></a>
+            <a class="button secondary" href="https://github.com/Imagine-That-Ai/PoCodex">Open the repo</a>
+          </div>
+          <div class="hero-note">A visual companion, not a replacement for the official runtime.</div>
+        </div>
+
+        <div class="visual" aria-label="Po Codex visual direction">
+          <figure class="visual-main">
+            <img src="assets/light-studio.jpg" alt="Warm light moving across a minimal studio surface" />
+            <figcaption class="visual-tag"><strong>light / intentional</strong><span>surface: white · accent: ember</span></figcaption>
+          </figure>
+          <figure class="visual-small one"><img src="assets/night-desk.jpg" alt="Carbon desk with a small pool of light" /></figure>
+          <figure class="visual-small two"><img src="assets/filament.jpg" alt="Close view of a warm filament texture" /></figure>
+          <div class="orbit" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="shell signal" aria-label="Design signals">
+        <div class="signal-item"><div class="signal-label">01 / material</div><div class="signal-value">White by day. Carbon at night.</div><div class="signal-copy">A true light canvas and a deep neutral night, with no navy cast in the application chrome.</div></div>
+        <div class="signal-item"><div class="signal-label">02 / identity</div><div class="signal-value">Warm copper, used carefully.</div><div class="signal-copy">Accent is for focus, action, and ownership—not for decorating every surface.</div></div>
+        <div class="signal-item"><div class="signal-label">03 / trust</div><div class="signal-value">State before spectacle.</div><div class="signal-copy">Remote, seats, and model identity should say what is known before they say what is pretty.</div></div>
+      </section>
+
+      <section class="shell principles" id="principles">
+        <div class="section-head">
+          <h2>Make the instrument feel considered.</h2>
+          <p>Po&quot;Codex is the design and product home for the companion layer around a custom Codex runtime.</p>
+        </div>
+        <div class="principle-grid">
+          <article class="principle"><div class="principle-index">A / 01</div><h3>Remote stays legible.</h3><p>Connected, waiting, failed, and unverified are different states. The surface should never flatten them into one green dot.</p></article>
+          <article class="principle"><div class="principle-index">B / 02</div><h3>Seats stay separate.</h3><p>Each account gets its own profile and history. Switching is a deliberate handoff, not a silent credential shuffle.</p></article>
+          <article class="principle"><div class="principle-index">C / 03</div><h3>Launch can have a little wit.</h3><p>A small orbital mark, a warm ember, a moment of ceremony—then get out of the way and let the work begin.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell"><span>Po&quot;Codex / Imagine That</span><span>Built as a companion layer · 2026</span></footer>
+
+    <script>
+      const root = document.documentElement;
+      const toggle = document.querySelector("#theme-toggle");
+      const label = document.querySelector("#theme-label");
+      const stored = localStorage.getItem("pocodex-theme");
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const setTheme = (theme) => {
+        root.dataset.theme = theme;
+        label.textContent = theme === "dark" ? "Light" : "Night";
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#0b0c0c" : "#f7f6f1");
+        localStorage.setItem("pocodex-theme", theme);
+      };
+      setTheme(stored || (systemDark ? "dark" : "light"));
+      toggle.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark"));
+    </script>
+  </body>
+</html>
