@@ -10,7 +10,7 @@ A named home for the overlay: white light by day, carbon-black night, warm coppe
 
 ## Local development
 
-The current entry point is the landing page at the repository root. Read [`DESIGN.md`](DESIGN.md) before changing the visual language.
+The current entry point is the landing page at the repository root. Read [`DESIGN.md`](DESIGN.md) before changing the visual language, and [`RUNTIME.md`](RUNTIME.md) for the private seat/Remote Control boundary.
 
 ```bash
 python3 -m http.server 4173
